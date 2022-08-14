@@ -23,7 +23,7 @@ func init() {
 
 	// store source files' name
 	for _, f := range files {
-		if !f.IsDir() && !strings.Contains(f.Name(), "all") {
+		if !f.IsDir() && !strings.Contains(f.Name(), "all") && !strings.Contains(f.Name(), ".DS_Store") {
 			sources = append(sources, f.Name())
 		}
 	}

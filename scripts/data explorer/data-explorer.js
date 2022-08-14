@@ -5,30 +5,58 @@
 */
 
 let tagNames = [
-  ["rx-java", "rx-java2", "rx-java3"], //rxjava
-  ["rxjs", "rxjs5", "rxjs6", "rxjs7"], //rxjs
-  ["rx-swift"] //rxswift
+  // ["rx-java", "rx-java2", "rx-java3"], //rxjava
+  // ["rxjs", "rxjs5", "rxjs6", "rxjs7"], //rxjs
+  // ["rx-swift"], //rxswift
+  ["combine"]
 ];
 
 // loads the in-page CodeMirror instance
 const editor = document.querySelector('.CodeMirror').CodeMirror;
 
 function buildQuery(tagName) {
-  return `select p.* from posts p inner join PostTags ps
-on p.Id = ps.PostId inner join Tags t on ps.TagId = t.Id and
-t.TagName = '${tagName}' where p.ParentId is null order by p.Id`;
+  return `SELECT p.* 
+  FROM   posts p 
+  WHERE  p.posttypeid = 1 
+         AND p.creationdate >= CONVERT (DATETIME, '2019-01-01', 20) 
+         AND ( p.tags LIKE '%<combine>%' 
+                OR ( p.tags LIKE '%<swift>%' 
+                     AND p.tags LIKE '%<publisher>%' ) 
+                OR ( p.tags LIKE '%<swift>%' 
+                     AND ( ( p.body LIKE '%' + 'AnyPublisher' + '%' 
+                              OR p.title LIKE '%' + 'AnyPublisher' + '%' ) 
+                            OR ( p.body LIKE '%' + 'AnyCancellable' + '%' 
+                                  OR p.title LIKE '%' + 'AnyCancellable' + '%' ) 
+                            OR ( p.body LIKE '%' + 'PassthroughSubject' + '%' 
+                                  OR p.title LIKE '%' + 'PassthroughSubject' + '%' 
+                               ) 
+                            OR ( p.body LIKE '%' + 'import Combine' + '%' 
+                                  OR p.title LIKE '%' + 'import Combine' + '%' ) ) 
+                   ) ) 
+  ORDER  BY p.id `;
 }
 
 function buildQueryWithAnswers(tagName) {
-  return `select pu.* from (
-select p.* from posts p inner join PostTags ps
-on p.Id = ps.PostId inner join Tags t on ps.TagId = t.Id and
-t.TagName = '${tagName}' where p.ParentId is null
-union
-select * from posts where Id in (select p.AcceptedAnswerId from posts p inner join PostTags ps
-on p.Id = ps.PostId inner join Tags t on ps.TagId = t.Id and
-t.TagName = '${tagName}' where p.ParentId is null and p.AcceptedAnswerId is not null)
-) pu order by pu.Id`;
+  return `SELECT p.* 
+  FROM   posts p 
+  WHERE  p.posttypeid = 1 
+         AND p.creationdate >= CONVERT (DATETIME, '2019-01-01', 20)
+         AND p.acceptedanswerid IS NOT NULL
+         AND ( p.tags LIKE '%<combine>%' 
+                OR ( p.tags LIKE '%<swift>%' 
+                     AND p.tags LIKE '%<publisher>%' ) 
+                OR ( p.tags LIKE '%<swift>%' 
+                     AND ( ( p.body LIKE '%' + 'AnyPublisher' + '%' 
+                              OR p.title LIKE '%' + 'AnyPublisher' + '%' ) 
+                            OR ( p.body LIKE '%' + 'AnyCancellable' + '%' 
+                                  OR p.title LIKE '%' + 'AnyCancellable' + '%' ) 
+                            OR ( p.body LIKE '%' + 'PassthroughSubject' + '%' 
+                                  OR p.title LIKE '%' + 'PassthroughSubject' + '%' 
+                               ) 
+                            OR ( p.body LIKE '%' + 'import Combine' + '%' 
+                                  OR p.title LIKE '%' + 'import Combine' + '%' ) ) 
+                   ) ) 
+  ORDER  BY p.id `;
 }
 
 function writeQuery(query) {
@@ -90,6 +118,7 @@ async function executeQuery(dist = 0) {
   await execute(buildQueryWithAnswers, dist)()
 }
 
-executeQuery(0); //rxjava
+executeQuery(0); //combine
+// executeQuery(0); //rxjava
 //executeQuery(1); //rxjs
 //executeQuery(2); //rxswift

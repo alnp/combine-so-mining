@@ -1,6 +1,6 @@
 [
   {
-    "fileName": "all_withAnswers",
+    "fileName": "all",
     "field": "Body",
     "combineTitleBody": true,
     "minTopics": 10,

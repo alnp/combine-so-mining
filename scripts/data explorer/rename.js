@@ -4,9 +4,10 @@ const fs = require("fs"),
 const dist = parseInt(process.argv[2]) || 0;
 
 let tagNames = [
-	["rx-java", "rx-java2", "rx-java3"], //rxjava
-	["rxjs", "rxjs5", "rxjs6", "rxjs7"], //rxjs
-	["rx-swift"] //rxswift
+	["combine"]
+	// ["rx-java", "rx-java2", "rx-java3"], //rxjava
+	// ["rxjs", "rxjs5", "rxjs6", "rxjs7"], //rxjs
+	// ["rx-swift"] //rxswift
 ];
 
 const srcFolder = path.resolve(__dirname, "./staging area");
@@ -14,16 +15,17 @@ const destFolder = path.resolve(__dirname, `../../assets/data explorer/${getDist
 
 function getDistName() {
 	switch (dist) {
-		case 1:
-			return "rxjs";
-		case 2:
-			return "rxswift";
+		// case 1:
+		// 	return "rxjs";
+		// case 2:
+		// 	return "rxswift";
 		default:
-			return "rxjava";
+			return "combine";
+			// return "rxjava";
 	}
 }
 
-fs.rmdir(destFolder, { recursive: true, force: true }, err => {
+fs.rm(destFolder, { recursive: true, force: true }, err => {
 	if (err) {
 		console.error(err);
 		process.exit(1);
