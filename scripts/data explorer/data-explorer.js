@@ -14,49 +14,139 @@ let tagNames = [
 // loads the in-page CodeMirror instance
 const editor = document.querySelector('.CodeMirror').CodeMirror;
 
+//https://data.stackexchange.com/stackoverflow/query/edit/1626027
 function buildQuery(tagName) {
-  return `SELECT p.* 
-  FROM   posts p 
-  WHERE  p.posttypeid = 1 
-         AND p.creationdate >= CONVERT (DATETIME, '2019-01-01', 20) 
-         AND ( p.tags LIKE '%<combine>%' 
-                OR ( p.tags LIKE '%<swift>%' 
-                     AND p.tags LIKE '%<publisher>%' ) 
-                OR ( p.tags LIKE '%<swift>%' 
-                     AND ( ( p.body LIKE '%' + 'AnyPublisher' + '%' 
-                              OR p.title LIKE '%' + 'AnyPublisher' + '%' ) 
-                            OR ( p.body LIKE '%' + 'AnyCancellable' + '%' 
-                                  OR p.title LIKE '%' + 'AnyCancellable' + '%' ) 
-                            OR ( p.body LIKE '%' + 'PassthroughSubject' + '%' 
-                                  OR p.title LIKE '%' + 'PassthroughSubject' + '%' 
-                               ) 
-                            OR ( p.body LIKE '%' + 'import Combine' + '%' 
-                                  OR p.title LIKE '%' + 'import Combine' + '%' ) ) 
-                   ) ) 
-  ORDER  BY p.id `;
+  return `SELECT
+  p.*
+FROM
+  posts p
+WHERE
+  p.posttypeid = 1
+  AND p.creationdate >= CONVERT (DATETIME, '2019-01-01', 20)
+  AND (
+      p.tags LIKE '%<combine>%'
+      OR (
+          p.tags LIKE '%<swift>%'
+          AND p.tags LIKE '%<publisher>%'
+      )
+      OR (
+          p.tags LIKE '%<swift>%'
+          AND (
+              (
+                  p.body LIKE '%' + 'AnyPublisher' + '%'
+                  OR p.title LIKE '%' + 'AnyPublisher' + '%'
+              )
+              OR (
+                  p.body LIKE '%' + 'AnyCancellable' + '%'
+                  OR p.title LIKE '%' + 'AnyCancellable' + '%'
+              )
+              OR (
+                  p.body LIKE '%' + 'PassthroughSubject' + '%'
+                  OR p.title LIKE '%' + 'PassthroughSubject' + '%'
+              )
+              OR (
+                  p.body LIKE '%' + 'import Combine' + '%'
+                  OR p.title LIKE '%' + 'import Combine' + '%'
+              )
+          )
+      )
+  )
+ORDER BY
+  p.id`;
 }
 
+//https://data.stackexchange.com/stackoverflow/query/edit/1626037
 function buildQueryWithAnswers(tagName) {
-  return `SELECT p.* 
-  FROM   posts p 
-  WHERE  p.posttypeid = 1 
-         AND p.creationdate >= CONVERT (DATETIME, '2019-01-01', 20)
-         AND p.acceptedanswerid IS NOT NULL
-         AND ( p.tags LIKE '%<combine>%' 
-                OR ( p.tags LIKE '%<swift>%' 
-                     AND p.tags LIKE '%<publisher>%' ) 
-                OR ( p.tags LIKE '%<swift>%' 
-                     AND ( ( p.body LIKE '%' + 'AnyPublisher' + '%' 
-                              OR p.title LIKE '%' + 'AnyPublisher' + '%' ) 
-                            OR ( p.body LIKE '%' + 'AnyCancellable' + '%' 
-                                  OR p.title LIKE '%' + 'AnyCancellable' + '%' ) 
-                            OR ( p.body LIKE '%' + 'PassthroughSubject' + '%' 
-                                  OR p.title LIKE '%' + 'PassthroughSubject' + '%' 
-                               ) 
-                            OR ( p.body LIKE '%' + 'import Combine' + '%' 
-                                  OR p.title LIKE '%' + 'import Combine' + '%' ) ) 
-                   ) ) 
-  ORDER  BY p.id `;
+  return `SELECT
+  pu.*
+FROM
+  (
+      SELECT
+          p.*
+      FROM
+          posts p
+      WHERE
+          p.posttypeid = 1
+          AND p.creationdate >= CONVERT (DATETIME, '2019-01-01', 20)
+          AND (
+              p.tags LIKE '%<combine>%'
+              OR (
+                  p.tags LIKE '%<swift>%'
+                  AND p.tags LIKE '%<publisher>%'
+              )
+              OR (
+                  p.tags LIKE '%<swift>%'
+                  AND (
+                      (
+                          p.body LIKE '%' + 'AnyPublisher' + '%'
+                          OR p.title LIKE '%' + 'AnyPublisher' + '%'
+                      )
+                      OR (
+                          p.body LIKE '%' + 'AnyCancellable' + '%'
+                          OR p.title LIKE '%' + 'AnyCancellable' + '%'
+                      )
+                      OR (
+                          p.body LIKE '%' + 'PassthroughSubject' + '%'
+                          OR p.title LIKE '%' + 'PassthroughSubject' + '%'
+                      )
+                      OR (
+                          p.body LIKE '%' + 'import Combine' + '%'
+                          OR p.title LIKE '%' + 'import Combine' + '%'
+                      )
+                  )
+              )
+          )
+      UNION
+      SELECT
+          *
+      FROM
+          posts
+      WHERE
+          id IN (
+              SELECT
+                  p.acceptedanswerid
+              FROM
+                  posts p
+              WHERE
+                  p.posttypeid = 1
+                  AND p.creationdate >= CONVERT (
+                      DATETIME,
+                      '2019-01-01',
+                      20
+                  )
+                  AND p.acceptedanswerid IS NOT NULL
+                  AND (
+                      p.tags LIKE '%<combine>%'
+                      OR (
+                          p.tags LIKE '%<swift>%'
+                          AND p.tags LIKE '%<publisher>%'
+                      )
+                      OR (
+                          p.tags LIKE '%<swift>%'
+                          AND (
+                              (
+                                  p.body LIKE '%' + 'AnyPublisher' + '%'
+                                  OR p.title LIKE '%' + 'AnyPublisher' + '%'
+                              )
+                              OR (
+                                  p.body LIKE '%' + 'AnyCancellable' + '%'
+                                  OR p.title LIKE '%' + 'AnyCancellable' + '%'
+                              )
+                              OR (
+                                  p.body LIKE '%' + 'PassthroughSubject' + '%'
+                                  OR p.title LIKE '%' + 'PassthroughSubject' + '%'
+                              )
+                              OR (
+                                  p.body LIKE '%' + 'import Combine' + '%'
+                                  OR p.title LIKE '%' + 'import Combine' + '%'
+                              )
+                          )
+                      )
+                  )
+          )
+  ) pu
+ORDER BY
+  pu.id`;
 }
 
 function writeQuery(query) {
