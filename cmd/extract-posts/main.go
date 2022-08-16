@@ -13,13 +13,13 @@ import (
 )
 
 const (
-	DATE             = "2022-08-14 19-06-41"
-	NUMBER_OF_TOPICS = "26"
+	DATE             = "2022-08-16 16-24-52"
+	NUMBER_OF_TOPICS = "23"
 )
 
 var (
-	DOCTOPICS_PATH       = path.Join(config.LDA_RESULT_PATH, DATE, NUMBER_OF_TOPICS, fmt.Sprintf("all_doctopicdist_%s_Body.csv", NUMBER_OF_TOPICS))
-	POSTS_PATH           = path.Join(config.CONSOLIDATED_SOURCES_PATH, "all.csv")
+	DOCTOPICS_PATH       = path.Join(config.LDA_RESULT_PATH, DATE, NUMBER_OF_TOPICS, fmt.Sprintf("all_withAnswers_doctopicdist_%s_Body.csv", NUMBER_OF_TOPICS))
+	POSTS_PATH           = path.Join(config.CONSOLIDATED_SOURCES_PATH, "all_withAnswers.csv")
 	EXTRACTED_POSTS_PATH = path.Join("assets", "extracted-posts")
 )
 
