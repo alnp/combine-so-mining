@@ -137,9 +137,9 @@ FROM
                                   OR p.title LIKE '%' + 'PassthroughSubject' + '%'
                               )
                               OR (
-                                  p.body LIKE '%' + 'import Combine' + '%'
-                                  OR p.title LIKE '%' + 'import Combine' + '%'
-                              )
+                                p.body LIKE '%' + 'import Combine' + '%'
+                                OR p.title LIKE '%' + 'import Combine' + '%'
+                             )
                           )
                       )
                   )
