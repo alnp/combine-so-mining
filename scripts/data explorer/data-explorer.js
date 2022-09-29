@@ -5,148 +5,31 @@
 */
 
 let tagNames = [
-  // ["rx-java", "rx-java2", "rx-java3"], //rxjava
-  // ["rxjs", "rxjs5", "rxjs6", "rxjs7"], //rxjs
-  // ["rx-swift"], //rxswift
-  ["combine"]
+  ["rx-java", "rx-java2", "rx-java3"], //rxjava
+  ["rxjs", "rxjs5", "rxjs6", "rxjs7"], //rxjs
+  ["rx-swift"], //rxswift
+  ["combine"] //combine
 ];
 
 // loads the in-page CodeMirror instance
 const editor = document.querySelector('.CodeMirror').CodeMirror;
 
-//https://data.stackexchange.com/stackoverflow/query/edit/1626027
 function buildQuery(tagName) {
-  return `SELECT
-  p.*
-FROM
-  posts p
-WHERE
-  p.posttypeid = 1
-  AND p.creationdate >= CONVERT (DATETIME, '2019-01-01', 20)
-  AND (
-      p.tags LIKE '%<combine>%'
-      OR (
-          p.tags LIKE '%<swift>%'
-          AND p.tags LIKE '%<publisher>%'
-      )
-      OR (
-          p.tags LIKE '%<swift>%'
-          AND (
-              (
-                  p.body LIKE '%' + 'AnyPublisher' + '%'
-                  OR p.title LIKE '%' + 'AnyPublisher' + '%'
-              )
-              OR (
-                  p.body LIKE '%' + 'AnyCancellable' + '%'
-                  OR p.title LIKE '%' + 'AnyCancellable' + '%'
-              )
-              OR (
-                  p.body LIKE '%' + 'PassthroughSubject' + '%'
-                  OR p.title LIKE '%' + 'PassthroughSubject' + '%'
-              )
-              OR (
-                  p.body LIKE '%' + 'import Combine' + '%'
-                  OR p.title LIKE '%' + 'import Combine' + '%'
-              )
-          )
-      )
-  )
-ORDER BY
-  p.id`;
+  return `select p.* from posts p inner join PostTags ps
+on p.Id = ps.PostId inner join Tags t on ps.TagId = t.Id and
+t.TagName = '${tagName}' where p.ParentId is null order by p.Id`;
 }
 
-//https://data.stackexchange.com/stackoverflow/query/edit/1626037
 function buildQueryWithAnswers(tagName) {
-  return `SELECT
-  pu.*
-FROM
-  (
-      SELECT
-          p.*
-      FROM
-          posts p
-      WHERE
-          p.posttypeid = 1
-          AND p.creationdate >= CONVERT (DATETIME, '2019-01-01', 20)
-          AND (
-              p.tags LIKE '%<combine>%'
-              OR (
-                  p.tags LIKE '%<swift>%'
-                  AND p.tags LIKE '%<publisher>%'
-              )
-              OR (
-                  p.tags LIKE '%<swift>%'
-                  AND (
-                      (
-                          p.body LIKE '%' + 'AnyPublisher' + '%'
-                          OR p.title LIKE '%' + 'AnyPublisher' + '%'
-                      )
-                      OR (
-                          p.body LIKE '%' + 'AnyCancellable' + '%'
-                          OR p.title LIKE '%' + 'AnyCancellable' + '%'
-                      )
-                      OR (
-                          p.body LIKE '%' + 'PassthroughSubject' + '%'
-                          OR p.title LIKE '%' + 'PassthroughSubject' + '%'
-                      )
-                      OR (
-                          p.body LIKE '%' + 'import Combine' + '%'
-                          OR p.title LIKE '%' + 'import Combine' + '%'
-                      )
-                  )
-              )
-          )
-      UNION
-      SELECT
-          *
-      FROM
-          posts
-      WHERE
-          id IN (
-              SELECT
-                  p.acceptedanswerid
-              FROM
-                  posts p
-              WHERE
-                  p.posttypeid = 1
-                  AND p.creationdate >= CONVERT (
-                      DATETIME,
-                      '2019-01-01',
-                      20
-                  )
-                  AND p.acceptedanswerid IS NOT NULL
-                  AND (
-                      p.tags LIKE '%<combine>%'
-                      OR (
-                          p.tags LIKE '%<swift>%'
-                          AND p.tags LIKE '%<publisher>%'
-                      )
-                      OR (
-                          p.tags LIKE '%<swift>%'
-                          AND (
-                              (
-                                  p.body LIKE '%' + 'AnyPublisher' + '%'
-                                  OR p.title LIKE '%' + 'AnyPublisher' + '%'
-                              )
-                              OR (
-                                  p.body LIKE '%' + 'AnyCancellable' + '%'
-                                  OR p.title LIKE '%' + 'AnyCancellable' + '%'
-                              )
-                              OR (
-                                  p.body LIKE '%' + 'PassthroughSubject' + '%'
-                                  OR p.title LIKE '%' + 'PassthroughSubject' + '%'
-                              )
-                              OR (
-                                  p.body LIKE '%' + 'import Combine' + '%'
-                                  OR p.title LIKE '%' + 'import Combine' + '%'
-                              )
-                          )
-                      )
-                  )
-          )
-  ) pu
-ORDER BY
-  pu.id`;
+  return `select pu.* from (
+select p.* from posts p inner join PostTags ps
+on p.Id = ps.PostId inner join Tags t on ps.TagId = t.Id and
+t.TagName = '${tagName}' where p.ParentId is null
+union
+select * from posts where Id in (select p.AcceptedAnswerId from posts p inner join PostTags ps
+on p.Id = ps.PostId inner join Tags t on ps.TagId = t.Id and
+t.TagName = '${tagName}' where p.ParentId is null and p.AcceptedAnswerId is not null)
+) pu order by pu.Id`;
 }
 
 function writeQuery(query) {
@@ -208,7 +91,7 @@ async function executeQuery(dist = 0) {
   await execute(buildQueryWithAnswers, dist)()
 }
 
-executeQuery(0); //combine
-// executeQuery(0); //rxjava
+//executeQuery(0); //rxjava
 //executeQuery(1); //rxjs
 //executeQuery(2); //rxswift
+executeQuery(3); //combine

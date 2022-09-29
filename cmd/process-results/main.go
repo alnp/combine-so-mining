@@ -17,8 +17,8 @@ import (
 )
 
 const (
-	DATE             = "2022-08-16 16-24-52"
-	NUMBER_OF_TOPICS = "23"
+	DATE             = "2022-09-26 20-40-13"
+	NUMBER_OF_TOPICS = "20"
 )
 
 var (
@@ -72,7 +72,7 @@ func writeToTxt(path string, header []string, data [][]string) {
 }
 
 func writeBasicInfo(share []topicTotal) {
-	resultPath := path.Join(RESULT_PROCESSING_PATH, "topics_info.txt")
+	resultPath := path.Join(RESULT_PROCESSING_PATH, fmt.Sprintf("topics_info_%s.txt", NUMBER_OF_TOPICS))
 	header := []string{"Topic", "Posts", "Percentage"}
 	var results [][]string
 	for _, t := range share {
@@ -83,7 +83,7 @@ func writeBasicInfo(share []topicTotal) {
 }
 
 func writePopularity(popularities []popularity) {
-	resultPath := path.Join(RESULT_PROCESSING_PATH, "popularity.txt")
+	resultPath := path.Join(RESULT_PROCESSING_PATH, fmt.Sprintf("popularity_%s.txt", NUMBER_OF_TOPICS))
 	header := []string{"Topic", "Avg. View", "Avg. Fav.", "Avg. Score"}
 	var results [][]string
 	for _, pop := range popularities {
@@ -95,7 +95,7 @@ func writePopularity(popularities []popularity) {
 }
 
 func writeDifficulty(difficulties []difficulty) {
-	resultPath := path.Join(RESULT_PROCESSING_PATH, "difficulty.txt")
+	resultPath := path.Join(RESULT_PROCESSING_PATH, fmt.Sprintf("difficulty_%s.txt", NUMBER_OF_TOPICS))
 	header := []string{"Topic", "Perc. No Acc. Answer", "Median Time(h)"}
 	var results [][]string
 	for _, diff := range difficulties {

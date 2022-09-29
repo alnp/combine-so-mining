@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	DATE             = "2022-08-16 16-24-52"
-	NUMBER_OF_TOPICS = "23"
+	DATE             = "2022-09-26 20-40-13"
+	NUMBER_OF_TOPICS = "20"
 	NUMBER_POSTS     = 15
 )
 
@@ -61,5 +61,5 @@ func main() {
 	util.WriteFolder(config.OPENSORT_RESULT_PATH)
 
 	csvUtil.WriteOpenSort(
-		path.Join(config.OPENSORT_RESULT_PATH, "opensort.csv"), randomPosts)
+		path.Join(config.OPENSORT_RESULT_PATH, fmt.Sprintf("opensort_%s.csv", NUMBER_OF_TOPICS)), randomPosts)
 }

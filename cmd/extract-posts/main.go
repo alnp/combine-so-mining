@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	DATE             = "2022-08-16 16-24-52"
-	NUMBER_OF_TOPICS = "23"
+	DATE             = "2022-09-26 20-40-13"
+	NUMBER_OF_TOPICS = "20"
 )
 
 var (
@@ -24,7 +24,7 @@ var (
 )
 
 // topic to be searched for
-const TOPIC = 22
+const TOPIC = 5
 
 func main() {
 	util.WriteFolder(EXTRACTED_POSTS_PATH)
