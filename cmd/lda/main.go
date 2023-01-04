@@ -47,6 +47,8 @@ func main() {
 			combineTitleBody(posts)
 		}
 
+		csvUtils.WritePostsCSV(filesPath, posts)
+
 		log.Println("Processing:", len(posts), "documents for",
 			cfg.FileName+".csv", "using", cfg.Field, "field")
 

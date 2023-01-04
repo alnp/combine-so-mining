@@ -4,7 +4,7 @@
     "field": "Body",
     "combineTitleBody": true,
     "minTopics": 10,
-    "maxTopics": 35,
+    "maxTopics": 25,
     "sampleWords": 20
   }
 ]
