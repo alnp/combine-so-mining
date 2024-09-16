@@ -1,10 +1,8 @@
 # Stack Mining
-Stack Overflow mining scripts used for the following paper during the 19th International Conference on Mining Software Repositories (MSR '22):
-> Mining the Usage of Reactive Programming APIs: A Mining Study on GitHub and Stack Overflow.
+Stack Overflow mining results used for the following paper during the 37th Brazilian Symposium on Software Engineering (SBES) for the Track Insightful Ideas and Emerging Results (IIER):
+> Reactive Programming with Swift Combine: An Analysis of Problems Faced by Developers on Stack Overflow.
 
-Complementary scripts, also utilized during the paper production, are available in:
-* [GitHub Mining](https://github.com/carloszimm/gh-mining-msr22)
-* [Operators Scraping](https://github.com/carloszimm/rx-scraping-msr22)
+Forked and adapted from the scripts used to the paper [Mining the Usage of Reactive Programming APIs: A Mining Study on GitHub and Stack Overflow](https://github.com/carloszimm/so-mining-msr22)
 
 ## Data
 Under the folders in `/assets`, data either genereated by or collected for the scripts execution can be found. The table gives a brief description of each folder:
@@ -12,19 +10,16 @@ Under the folders in `/assets`, data either genereated by or collected for the s
 | Folder   | Description         |
 | :------------- |:-------------|
 | data explorer | Contains posts collected from Stack Exchange Data Explorer |
-| extracted-posts | Includes JSON files having the posts related to the most relenvat topics (RQ3) |
 | lda-results | Contains the results of the last LDA execution |
-| operators-search | Includes the results for the operator search for Rx libraries |
-| operators | Includes JSON files consisting of Rx libraries' operators |
-| result-processing | Contains data presented in the Result section (RQ2) |
+| result-processing | Contains data presented in the Result section |
 
 The file `stopwords.txt` contains a list of stop words used during preprocessing.
 
 ### LDA results
-The results for the last LDA (Latent Dirichlet Allocation) are available under `/assets/2022-01-12 02-21-28/`. As detailed in the paper, the execution with the following settings generated the most coherent results:
+The results for the last LDA (Latent Dirichlet Allocation) are available under `/data-explorer/lda-results/2023-01-03 21-25-53/`. As detailed in the paper, the execution with the following settings generated the most coherent results:
 | Parameter     | Value         |
 | :------------- |:-------------:|
-| Topics         | 23 |
+| Topics         | 14 |
 | HyperParameters | &alpha;=&beta;=0.01 |
 | Iterations | 1,000 |
 
@@ -79,13 +74,6 @@ go run cmd/open-sort/main.go
 ```
 &ensp;:floppy_disk: After execution, the result is available at `assets/opensort`.
 
-##### operators-search
-Script to search for operators among the Stack Overflow posts.
-```sh
-go run cmd/operators-search/main.go
-```
-&ensp;:floppy_disk: After execution, the result is available at `assets/operators-search`.
-
 ##### process-results
 Script to process results and generate info about the topics, the popularities and difficulties.
 ```sh
@@ -118,68 +106,42 @@ Possible requirements:
 * Internet browser
 * Node.js (tested with v14.17.5)
 
-We elaborated a tiny JS script to download the Stack Overflow posts (questions with and without accepted answers) related to the rx libraries from [Stack Exchange Data Explorer](https://data.stackexchange.com/) (SEDE).
+We used the same tiny JS script used on Zimmerle's paper to download the Stack Overflow posts (questions with and without accepted answers) related to the Combine framework from [Stack Exchange Data Explorer](https://data.stackexchange.com/) (SEDE).
 It's available at `/scripts/data explorer/data-explorer.js`. To execute it, one must:
 1. Be logged in SEDE;
 2. Place the script in the DevTools's **Console**;
-3. Call `executeQuery` passing 0 (for RxJava), 1 (for RxJS), and 2 (for RxSwift) as a parameter.
+3. Call `executeQuery` passing 3 for Combine as a parameter.
 
-Moreover, there's a second script(`/scripts/data explorer/rename.js`) that can be used to move (and rename) the results to the their proper folder `/assets/data explorer/[rx library folder]`, so they can be further used by the Go [consolidate-sources](#consolidate-sources) script. In order for this second JS script to work, one must place the results under `/scripts/data explorer/staging area` and call the script in a terminal (with node) and passing either 0 (for RxJava), 1 (for RxJS), and 2 (for RxSwift). For example:
+Moreover, there's a second script(`/scripts/data explorer/rename.js`) that can be used to move (and rename) the results to the their proper folder `/assets/data explorer/[library folder]`, so they can be further used by the Go [consolidate-sources](#consolidate-sources) script. In order for this second JS script to work, one must place the results under `/scripts/data explorer/staging area` and call the script in a terminal (with node) and passing 3 (for Combine). For example:
 ```sh
-node rename 0
+node rename 3
 ```
 Before execution of node.js script, one must execute the following terminal command within `/scripts/data explorer/`:
 ```sh
 npm install
 ```
-As detailed in the paper, these were the Stack Overflow tags used:
-* *rx-java*, *rx-java2*, *rx-java3* (RxJava)
-* *rxjs*, *rxjs5*, *rxjs6*, *rxjs7* (RxJS)
-* *rx-swift* (RxSwift)
+As detailed in the paper, the Stack Overflow tag used:
+* *combine* (Combine)
 
 ## Other Useful Information
 ### Stack Overflow Removed Terms
 As defined in the preprocessing phase in the paper, some terms commonly found in the Stack Overflow posts were removed from the corpus. Those include:
-<blockquote>
-<code>differ</code>, <code>specif</code>, <code>deal</code>, <code>prefer</code>, <code>easili</code>, <code>easier</code>,
-<code>mind</code>, <code>current</code>, <code>solv</code>, <code>proper</code>, <code>modifi</code>, <code>explain</code>,
-<code>hope</code>, <code>help</code>, <code>wonder</code>, <code>altern</code>, <code>sens</code>, <code>entir</code>,
-<code>ps</code>, <code>solut</code>, <code>achiev</code>, <code>approach</code>, <code>answer</code>, <code>requir</code>,
-<code>lot</code>, <code>feel</code>, <code>pretti</code>, <code>easi</code>, <code>goal</code>, <code>think</code>,
-<code>complex</code>, <code>eleg</code>, <code>improv</code>, <code>look</code>, <code>complic</code>, <code>day</code>,
-<code>chang</code>, <code>issu</code>, <code>add</code>, <code>edit</code>, <code>remov</code>, <code>custom</code>,
-<code>suggest</code>, <code>comment</code>, <code>ad</code>, <code>refer</code>, <code>stackblitz</code>, <code>link</code>,
-<code>mention</code>, <code>detect</code>, <code>face</code>, <code>fix</code>, <code>attach</code>, <code>perfect</code>,
-<code>mark</code>, <code>reason</code>, <code>suppos</code>, <code>notic</code>, <code>snippet</code>, <code>demo</code>,
-<code>line</code>, <code>piec</code>, <code>appear</code>
-</blockquote>
+> `differ`, `specif`, `deal`, `prefer`, `easili`, `easier`, `mind`, `current`, `solv`, `proper`, `modifi`, `explain`, `hope`, `help`, `wonder`, `altern`, `sens`, `entir`, `ps`, `solut`, `achiev`, `approach`, `answer`, `requir`, `lot`, `feel`, `pretti`, `easi`, `goal`, `think`, `complex`, `eleg`, `improv`, `look`, `complic`, `day`, `chang`, `issu`, `add`, `edit`, `remov`, `custom`, `suggest`, `comment`, `ad`, `refer`, `stackblitz`, `link`, `mention`, `detect`, `face`, `fix`, `attach`, `perfect`, `mark`, `reason`, `suppos`, `notic`, `snippet`, `demo`, `line`, `piec`, `appear`
 
 ### Topic-Label Mapping
 | Topic #      | Label/Name    |
 | ------------ |:-------------|
-| 0 | Concurrency |
-| 1 | Stream Creation and Composition |
-| 2 | Typing and Correctness |
-| 3 | UI for Web-based Systems |
-| 4 | Input Validation |
-| 5 | Introductory Questions |
-| 6 | Testing and Debugging |
-| 7 | REST API Calls |
-| 8 | Android Development |
-| 9 | Data Access |
-| 10 | State Management and JavaScript |
-| 11 | Control Flow |
-| 12 | HTTP Handling |
-| 13 | Stream Manipulation |
-| 14 | Error Handling |
-| 15 | Stream Lifecycle |
-| 16 | Array Manipulation |
-| 17 | Web Development |
-| 18 | General Programming |
-| 19 | iOS Development |
-| 20 | Multicasting |
-| 21 | Timing |
-| 22 | Dependency Management  |
-
-### Tables and Figures
-Scripts used to produce some tables and figures present in the paper are located at the [GitHub Mining](https://github.com/carloszimm/gh-mining-msr22) repository. That was made to facilitate cross evaluation (GitHub + SO data) that some of those illustrations required.
+| 0 | Displaying Data From Collections |
+| 1 | Operators for Stream Manipulation |
+| 2 | ViewModel in SwiftUI |
+| 3 | REST API Calls |
+| 4 | Data Binding and View Updating |
+| 5 | Introductory Combine |
+| 6 | Stream Composition |
+| 7 | Concurrency |
+| 8 | UI and User Interaction |
+| 9 | Software Development |
+| 10 | Publishing Data |
+| 11 | Stream Lifecycle |
+| 12 | Data Typing |
+| 13 | Bugs and Error Handling |
